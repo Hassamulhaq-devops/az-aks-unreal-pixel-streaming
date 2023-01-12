@@ -2,12 +2,10 @@
 Referenece Repo to deploy Unreal Pixel Streaming on AKS
 
 ![](img/UEPS.gif)
-## Build and Push Matchmaker,Signalling,TURN and Game Images
-``` bash
-cd game-server-components
-./docker-build.sh
-```
+
 ## Provision AKS Service on Azure
+
+In this intial run of the 
 
 ```infrastructure/azure-cli/ClusterCreate.sh```
 
@@ -25,13 +23,22 @@ az group create \
     --name $RG_NAME \
     --location $LOCATION
 
+# Create Azure Container Registry
+az acr create \
+    --name $CLUSTER_NAME \
+    --resource-group $RG_NAME \
+    --location $LOCATION \
+    --sku Standard
+
 # Create AKS Cluster
 az aks create \
     -g $RG_NAME \
     -n $CLUSTER_NAME \
+    --location $LOCATION \
     --enable-managed-identity \
     --node-count 1 \
     --enable-addons monitoring \
+    --attach-acr $CLUSTER_NAME \
     --enable-msi-auth-for-monitoring  \
     --generate-ssh-keys
 ```
@@ -73,7 +80,17 @@ az aks nodepool add \
 az aks get-credentials -n $CLUSTER_NAME -g $RG_NAME
 ```
 
-## Deploy Game Server Components
+## Containerize and Deploy Game Server Components
+
+### Build and Push Matchmaker,Signalling,TURN and Game Images
+
+We will need to build and push the Game Server Components to our Azure Container Registry (ACR) for use in our AKS Cluster.
+
+``` bash
+cd game-server-components
+./docker-build.sh
+```
+
 
 ### Deploy Redis server to store realtime count of current connected players
 
