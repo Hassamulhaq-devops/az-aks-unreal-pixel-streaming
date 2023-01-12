@@ -76,8 +76,9 @@ az aks nodepool add \
 ```
 
 ### Get AKS Credentials to deploy services to AKS
-```
+```bash
 az aks get-credentials -n $CLUSTER_NAME -g $RG_NAME
+# Note: Will need to add in kubelogin instructions
 ```
 
 ## Containerize and Deploy Game Server Components
