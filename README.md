@@ -4,29 +4,58 @@ Referenece Repo to deploy Unreal Pixel Streaming on AKS
 ![](img/UEPS.gif)
 ## Build and Push Matchmaker,Signalling,TURN and Game Images
 ``` bash
+cd game-server-components
 ./docker-build.sh
 ```
 ## Provision AKS Service on Azure
-```bash
-az group create --name pixel_group --location eastus
-az aks create -g pixel_group -n uepixelstrm --enable-managed-identity --node-count 1 --enable-addons monitoring --enable-msi-auth-for-monitoring  --generate-ssh-keys
 
-```
-### Add a GPU nodepool
+```infrastructure/azure-cli/ClusterCreate.sh```
+
+**NOTE**: Ensure you set/change the variables `RG_NAME`, `CLUSTER_NAME`, `LOCATION` to suit your needs
+
 ```bash
-    az aks nodepool add \
-    --resource-group pixel_group \
-    --cluster-name uepixelstrm \
+#! /bin/bash
+
+export RG_NAME="pixel_group"
+export CLUSTER_NAME="urpixelstream"
+export LOCATION="eastus"
+
+# Create Resource Group
+az group create \
+    --name $RG_NAME \
+    --location $LOCATION
+
+# Create AKS Cluster
+az aks create \
+    -g $RG_NAME \
+    -n $CLUSTER_NAME \
+    --enable-managed-identity \
+    --node-count 1 \
+    --enable-addons monitoring \
+    --enable-msi-auth-for-monitoring  \
+    --generate-ssh-keys
+```
+
+### Add a GPU nodepool
+```infrastructure/azure-cli/Nodepools.sh```
+```bash
+# Add a GPU sku nodepool
+# Note: Taint the nodepool so that  
+
+az aks nodepool add \
+    --resource-group $RG_NAME \
+    --cluster-name $CLUSTER_NAME \
     --name gpunp \
     --node-count 1 \
-    --node-vm-size Standard_NC12_Promo \
-    --node-taints sku=gpu:NoSchedule \
-    --aks-custom-headers UseGPUDedicatedVHD=true \
     --node-osdisk-size 250 \
-    --mode User
-    
+    --mode User \
+    --node-vm-size $GPU_NP_SKU \
+    --aks-custom-headers UseGPUDedicatedVHD=true \
+    --node-taints sku=gpu:NoSchedule
 ```    
+
 ### Add a nodepool for TURN
+```infrastructure/azure-cli/Nodepools.sh```
 ```bash
     az aks nodepool add \
     --resource-group pixel_group \
@@ -39,9 +68,10 @@ az aks create -g pixel_group -n uepixelstrm --enable-managed-identity --node-cou
     --mode User \
     --enable-node-public-ip
 ```
+
 ## Deploy Pixel Streaming Services on AKS
 ```bash 
-    kubectl apply -f aks-deploy.yaml
+    kubectl apply -f manifests/aks-deploy-game-server-components.yaml
 ```
 ![](img/aks.png)
 
@@ -58,7 +88,7 @@ kubectl expose pod redis --port=6379 --target-port=6379
 
 ## Deploy Autoscaled Pixel Streaming Services on AKS
 ```bash
- kubectl apply -f aks-deploy-autoscale.yaml
+ kubectl apply -f aks-deploy-game-server-components-with-autoscale.yaml
  ```
 
 ![](img/SignallingAutoScale.gif)
