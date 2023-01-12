@@ -35,7 +35,6 @@ az aks create \
     --enable-msi-auth-for-monitoring  \
     --generate-ssh-keys
 ```
-
 ### Add a GPU nodepool
 ```infrastructure/azure-cli/Nodepools.sh```
 ```bash
@@ -69,7 +68,22 @@ az aks nodepool add \
     --enable-node-public-ip
 ```
 
-## Deploy Pixel Streaming Services on AKS
+### Get AKS Credentials to deploy services to AKS
+```
+az aks get-credentials -n $CLUSTER_NAME -g $RG_NAME
+```
+
+## Deploy Game Server Components
+
+### Deploy Redis server to store realtime count of current connected players
+
+Redis will be a dependency for the game server components to store info about currently connected  players
+
+```bash
+kubectl apply -f manifests/aks-deploy-redis.yaml
+```
+
+### Deploy Pixel Streaming Services on AKS
 ```bash 
     kubectl apply -f manifests/aks-deploy-game-server-components.yaml
 ```
@@ -79,13 +93,7 @@ az aks nodepool add \
 
 This is reference implementation for autoscaling of signalling servers based on number of connected players.
 
-## Deploy Redis server to store realtime count of current connected palyers
-
-```bash
-kubectl apply -f manifests/aks-deploy-redis.yaml
-```
-
-## Deploy Autoscaled Pixel Streaming Services on AKS
+### Deploy Autoscaled Pixel Streaming Services on AKS
 ```bash
  kubectl apply -f manifests/aks-deploy-game-server-components-with-autoscale.yaml
  ```
