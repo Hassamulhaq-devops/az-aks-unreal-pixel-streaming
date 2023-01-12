@@ -82,13 +82,12 @@ This is reference implementation for autoscaling of signalling servers based on 
 ## Deploy Redis server to store realtime count of current connected palyers
 
 ```bash
-kubectl run --image=bitnami/redis:latest --env="ALLOW_EMPTY_PASSWORD=yes" redis
-kubectl expose pod redis --port=6379 --target-port=6379
+kubectl apply -f manifests/aks-deploy-redis.yaml
 ```
 
 ## Deploy Autoscaled Pixel Streaming Services on AKS
 ```bash
- kubectl apply -f aks-deploy-game-server-components-with-autoscale.yaml
+ kubectl apply -f manifests/aks-deploy-game-server-components-with-autoscale.yaml
  ```
 
 ![](img/SignallingAutoScale.gif)
