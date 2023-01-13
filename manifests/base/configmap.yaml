@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pixel-streaming-config
+data:
+  matchmaker.json:  |
+    {
+    "HttpPort": "90",
+    "UseHTTPS": "false",
+    "MatchmakerPort": "9999",
+    "LogToFile": "true"
+    }
+  signallingserver.json:  |
+    {
+      "UseFrontend": false,
+      "UseMatchmaker": true,
+      "UseHTTPS": false,
+      "UseAuthentication": false,
+      "LogToFile": true,
+      "LogVerbose": true,
+      "HomepageFile": "player.html",
+      "AdditionalRoutes": {},
+      "EnableWebserver": true,
+      "MatchmakerAddress": "matchmaker",
+      "MatchmakerPort": "9999",
+      "PublicIp": "",
+      "HttpPort": 80,
+      "HttpsPort": 443,
+      "StreamerPort": 8888,
+      "SFUPort": 8889,
+      "MaxPlayerCount": -1
+    }

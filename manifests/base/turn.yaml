@@ -1,0 +1,52 @@
+# TURN Server Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: turnserver
+  labels:
+    app: turnserver
+spec:
+  ports:
+  - port: 3478
+    targetPort: 3478
+    name: porttcp3478
+    protocol: TCP
+  selector:
+    app: turnserver 
+  type: LoadBalancer
+---
+# Kubernetes TURN Server DaemonSet
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: turnserver
+  labels:
+    app: turnserver
+spec:
+  selector:
+    matchLabels:
+      app: turnserver
+  template:
+    metadata:
+      labels:
+        app: turnserver
+    spec:
+      nodeSelector:
+        "agentpool": "turnp"
+      tolerations:
+      - key: "sku"
+        operator: "Equal"
+        value: "turn"
+        effect: "NoSchedule"   
+      hostNetwork: true
+      containers:
+      - name: turnserver
+        image: fancy.azurecr.io/turn:latest
+        ports:
+        - containerPort: 3478
+          protocol: UDP
+          name: udp
+        - containerPort: 3478
+          protocol: TCP
+          name: tcp
+
