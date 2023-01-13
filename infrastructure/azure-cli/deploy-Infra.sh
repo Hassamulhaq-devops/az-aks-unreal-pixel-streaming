@@ -1,11 +1,27 @@
 #! /bin/bash
+export RG_NAME="pixel_group"
+export CLUSTER_NAME="urpixelstream"
+export LOCATION="eastus"
+export GPU_NP_SKU="Standard_NC12_Promo"
+export TURN_NP_SKU="Standard_F8s_v2"
 
-GPU_NP_SKU="Standard_NC12_Promo"
-TURN_NP_SKU="Standard_F8s_v2"
+# Create Resource Group
+az group create \
+    --name $RG_NAME \
+    --location $LOCATION
+
+# Create AKS Cluster
+az aks create \
+    -g $RG_NAME \
+    -n $CLUSTER_NAME \
+    --enable-managed-identity \
+    --node-count 1 \
+    --enable-addons monitoring \
+    --enable-msi-auth-for-monitoring  \
+    --generate-ssh-keys
 
 # Add a GPU sku nodepool
-# Note: Taint the nodepool so that  
-
+# Note: Taint the nodepool to prevent unintended use
 az aks nodepool add \
     --resource-group $RG_NAME \
     --cluster-name $CLUSTER_NAME \
