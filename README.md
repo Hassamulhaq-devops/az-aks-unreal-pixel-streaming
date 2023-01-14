@@ -1,6 +1,22 @@
 # The Unreal Pixel Streaming On Azure Kubernetes Service!
 Referenece Repo to deploy Unreal Pixel Streaming on AKS
 
+## Build Unreal Engine App image . Copy the Dockerfile to the root of the Unreal Engine App
+***NOTE*** YOU MUST JOIN THE EPIC GAMES GitHub ORG to access the base container image
+https://www.unrealengine.com/en-US/ue-on-github
+Then you must Log in to GitHub Container Registry (GHCR) with a Pat Token
+https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry
+Create a Classic PAT token and gratn read:package scope
+
+```bash
+# Set ENV VAR
+export CR_PAT="your-read-only-token-for-packages"
+export USERNAME="your-git-hub-user-name"
+# Log into GHCR to build this image in an interactive login shell
+
+echo $CR_PAT | docker login ghcr.io -u USERNAME --password-stdin
+```
+
 ![](img/UEPS.gif)
 
 ## Provision AKS Service on Azure
