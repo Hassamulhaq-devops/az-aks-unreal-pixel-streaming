@@ -10,6 +10,7 @@ echo "Create RG"
 
 # Need to Register GPU Nodes for AKS
 az feature register --namespace "Microsoft.ContainerService" --name "GPUDedicatedVHDPreview"
+az feature show --namespace "Microsoft.ContainerService" --name "GPUDedicatedVHDPreview"
 
 az group create \
     --name $RG_NAME \
@@ -61,3 +62,4 @@ az aks nodepool add \
     --node-vm-size $TURN_NP_SKU \
     --node-taints sku=turn:NoSchedule \
     --no-wait
+

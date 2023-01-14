@@ -1,5 +1,6 @@
 # Update your container registry name here
-CONTINAER_REG="fancy.azurecr.io"
+export CONTINAER_REG="$CLUSTER_NAME.azurecr.io"
+
 # Build Matchmaker image
 cd Matchmaker/platform_scripts/bash
 docker build -t matchmaker:4.27 -f Dockerfile ../..
@@ -31,4 +32,3 @@ docker push $CONTINAER_REG/game:4.27
 docker push $CONTINAER_REG/turn
 docker push $CONTINAER_REG/playermonitor
 docker push $CONTINAER_REG/scalemonitor
-
