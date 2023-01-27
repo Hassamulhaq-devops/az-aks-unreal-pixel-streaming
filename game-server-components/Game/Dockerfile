@@ -1,6 +1,6 @@
 FROM --platform=${BUILDPLATFORM:-linux/amd64} ghcr.io/epicgames/unreal-engine:dev-4.27 AS build
 
-COPY --chown=ue4:ue4 . /project
+COPY --chown=ue4:ue4 ./MyDemoProject /project
 
 WORKDIR  /project
 
