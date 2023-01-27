@@ -145,7 +145,7 @@ spec:
     spec:
       containers:
       - name: matchmaker
-        image: fancy.azurecr.io/matchmaker:4.27
+        image: gbbpixel.azurecr.io/pixelstream/matchmaker:4.27
         ports:
         - containerPort: 90
         - containerPort: 9999
@@ -179,7 +179,7 @@ spec:
       serviceAccountName: kubectl-client
       initContainers:
       - name: init
-        image: "fancy.azurecr.io/kubectlclient"
+        image: "bitnami/kubectl:latest"
         command: ["sh"]
         args:
         - -c
@@ -202,7 +202,7 @@ spec:
           sleep 10    
       containers:
       - name: signallingserver
-        image: fancy.azurecr.io/signallingwebserver:4.27
+        image: gbbpixel.azurecr.io/pixelstream/signallingwebserver:4.27
         envFrom:
         - configMapRef:
             name: signallingserver-config-ips
@@ -217,7 +217,7 @@ spec:
         - name: pixel-streaming-config
           mountPath: /config
       - name: game
-        image: fancy.azurecr.io/game:4.27
+        image: gbbpixel.azurecr.io/pixelstream/game:4.27
         env:
         -  name: SIGNALSERVER_URL
            value: ws://signallingserver:8888
@@ -258,7 +258,7 @@ spec:
       hostNetwork: true
       containers:
       - name: turnserver
-        image: fancy.azurecr.io/turn:latest
+        image: gbbpixel.azurecr.io/pixelstream/turn:latest
         ports:
         - containerPort: 3478
           protocol: UDP

@@ -6,8 +6,9 @@ export GAME_COMPONENTS_PATH=$GIT_REPO_ROOT_PATH"/game-server-components"
 
 export RG_NAME="pixel_group"
 export CLUSTER_NAME="urpixelstream"
+export ACR_NAME="gbbpixel"
 export LOCATION="eastus"
-export GPU_NP_SKU="Standard_NC12_Promo"
+export GPU_NP_SKU="Standard_NC12"
 export TURN_NP_SKU="Standard_F8s_v2"
 
 # Create Resource Group
@@ -22,7 +23,7 @@ az group create \
     --location $LOCATION
 
 echo "Create ACR"
-az acr create --name $CLUSTER_NAME -g $RG_NAME -l $LOCATION --sku Standard 
+az acr create --name $ACR_NAME -g $RG_NAME -l $LOCATION --sku Standard 
 
 # Create AKS Cluster
 echo "Create Cluster"
@@ -35,7 +36,10 @@ az aks create \
     --enable-addons monitoring \
     --enable-msi-auth-for-monitoring  \
     --generate-ssh-keys \
-    --attach-acr $CLUSTER_NAME
+    --attach-acr $ACR_NAME
+
+# az aks update -n $CLUSTER_NAME -g $RG_NAME --attach-acr $ACR_NAME
+
 
 # Add a GPU sku nodepool
 # Note: Taint the nodepool to prevent unintended use
@@ -75,7 +79,7 @@ az aks get-credentials -n $CLUSTER_NAME -g $RG_NAME
 
 
 # Update your container registry name here
-export CONTAINER_REGISTRY_URL="$CLUSTER_NAME.azurecr.io"
+export CONTAINER_REGISTRY_URL="$ACR_NAME.azurecr.io"
 export ORG="pixelstream"
 export CONTAINER_URI=$CONTAINER_REGISTRY_URL/$ORG
 
