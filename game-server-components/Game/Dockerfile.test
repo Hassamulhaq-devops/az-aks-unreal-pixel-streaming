@@ -1,0 +1,8 @@
+FROM --platform=${BUILDPLATFORM:-linux/amd64} gbbpixel.azurecr.io/epicgames/unreal-engine:runtime-pixel-streaming
+WORKDIR /home/ue4/project
+COPY --chown=ue4:ue4 ./MyDemoProject .
+# COPY --from=build --chown=ue4:ue4 /project/Packaged/LinuxNoEditor ./
+
+# More Configs: https://docs.unrealengine.com/4.27/en-US/SharingAndReleasing/PixelStreaming/PixelStreamingReference/
+RUN ["chmod", "+x", "/home/ue4/project/LinuxNoEditor/MyDemoProject.sh"]
+CMD ["/bin/bash", "-c", "/home/ue4/project/LinuxNoEditor/MyDemoProject.sh -PixelStreamingURL=${SIGNALSERVER_URL} -RenderOffscreen -Unattended -ResX=1920 -ResY=1080 -Windowed -ForceRes -StdOut" ]
