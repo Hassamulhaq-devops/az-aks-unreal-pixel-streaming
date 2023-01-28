@@ -226,7 +226,7 @@ spec:
         - name: signallingserver-logs
           mountPath: /opt/SignallingWebServer/logs
       - name: game
-        image: gbbpixel.azurecr.io/pixelstream/game:4.27
+        image: gbbpixel.azurecr.io/pixelstream/game:latest
         env:
         -  name: SIGNALSERVER_URL
            value: ws://signallingserver:8888
