@@ -39,5 +39,5 @@ spec:
         env:
           - name: ALLOW_EMPTY_PASSWORD
             value: "yes"
-          # - name: REDIS_REQUIREPASS
-          #   value: ""
+          - name: REDIS_REQUIREPASS
+            value: ""

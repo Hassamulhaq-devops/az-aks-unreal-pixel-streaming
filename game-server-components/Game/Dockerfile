@@ -20,4 +20,6 @@ WORKDIR /home/ue4/project
 COPY --from=build --chown=ue4:ue4 /project/Packaged/LinuxNoEditor ./
 
 # More Configs: https://docs.unrealengine.com/4.27/en-US/SharingAndReleasing/PixelStreaming/PixelStreamingReference/
+# CMD ["/bin/bash", "-c", "/home/ue4/project/Packaged/LinuxNoEditor/MyDemoProject.sh -PixelStreamingURL=${SIGNALSERVER_URL} -RenderOffscreen -Unattended -ResX=1920 -ResY=1080 -Windowed -ForceRes -StdOut" ]
+
 CMD ["/bin/bash", "-c", "./MyDemoProject.sh -PixelStreamingURL=${SIGNALSERVER_URL} -RenderOffscreen -Unattended -ResX=1920 -ResY=1080 -Windowed -ForceRes -StdOut" ]
