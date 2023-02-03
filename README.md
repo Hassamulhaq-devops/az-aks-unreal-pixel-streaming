@@ -100,14 +100,15 @@ export USERNAME="your-git-hub-user-name"
 
 echo $CR_PAT | docker login ghcr.io -u $USERNAME --password-stdin
 ```
-### Build and Push Matchmaker,Signalling,TURN and Game Images.
+### Build and Push Matchmaker, Signalling,TURN and Game Images.
 
 We will need to build and push the Game Server Components to our Azure Container Registry (ACR) for use in our AKS Cluster. 
 
 > NOTE:
 > For the Game image, you will need an unreal project that was compiled on a Linux-based machine.
 > We provide a sample project that can be used as a starting point [here](https://github.com/appdevgbb/unreal-engine-sample-project)
-> If you are using this sample project, please do the following:
+
+If you are using this sample project, please do the following:
 
 1. git clone https://github.com/appdevgbb/unreal-engine-sample-project.git
 1. cd unreal-engine-sample-project
