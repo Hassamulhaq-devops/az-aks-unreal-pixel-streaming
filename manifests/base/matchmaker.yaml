@@ -1,3 +1,4 @@
+# MatchMaker Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -15,8 +16,8 @@ spec:
   selector:
     app: matchmaker 
   type: LoadBalancer
-
---- 
+---
+# Deploy  MatchMaker
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -35,7 +36,7 @@ spec:
     spec:
       containers:
       - name: matchmaker
-        image: fancy.azurecr.io/matchmaker:4.27
+        image: MATCHMAKER
         ports:
         - containerPort: 90
         - containerPort: 9999
@@ -45,4 +46,4 @@ spec:
       volumes:
         - name: pixel-streaming-config
           configMap:
-            name: pixel-streaming-config 
+            name: pixel-streaming-config

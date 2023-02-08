@@ -1,8 +1,26 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-bases:
+resources:
 - ../base
-patches:
-- path: matchmaker.patch.yaml
-- path: signallingwebserver.patch.yaml
-- path: turn.patch.yaml
+images:
+- name: GAME
+  newName: gbbpixel.azurecr.io/pixelstream/game
+  newTag: "dc-build2"
+- name: KUBECTL
+  newName: bitnami/kubectl
+  newTag: "latest"
+- name: MATCHMAKER
+  newName: gbbpixel.azurecr.io/pixelstream/matchmaker
+  newTag: "4.27"
+- name: REDIS
+  newName: bitnami/redis
+  newTag: "latest"
+- name: TURN
+  newName: gbbpixel.azurecr.io/pixelstream/turn
+  newTag: "latest"
+- name: SCALEMONITOR
+  newName: gbbpixel.azurecr.io/pixelstream/scalemonitor
+  newTag: "latest"
+- name: SIGNALLINGWEBSERVER
+  newName: gbbpixel.azurecr.io/pixelstream/signallingwebserver
+  newTag: "4.27"

@@ -21,6 +21,25 @@ rules:
   - services
   verbs:
   - '*'
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs: 
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  - apps
+  resources:
+  - deployments
+  - deployments/scale
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -34,7 +53,8 @@ subjects:
 - kind: ServiceAccount
   name: kubectl-client
   namespace: default
----
+--- 
+# SignallingServer Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -53,6 +73,7 @@ spec:
     app: signallingserver 
   type: LoadBalancer
 ---
+# Deploy SignallingServer
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -72,7 +93,7 @@ spec:
       serviceAccountName: kubectl-client
       initContainers:
       - name: init
-        image: "fancy.azurecr.io/kubectlclient"
+        image: KUBECTL
         command: ["sh"]
         args:
         - -c
@@ -95,13 +116,13 @@ spec:
           sleep 10    
       containers:
       - name: signallingserver
-        image: fancy.azurecr.io/signallingwebserver:4.27
+        image: SIGNALLINGWEBSERVER
         envFrom:
         - configMapRef:
             name: signallingserver-config-ips
         args: 
           - --configFile=/config/signallingserver.json
-          - --peerConnectionOptions={"iceServers":[{"urls":["turn:$(turnLoadBalancerIP):3478"],"username":"usr","credential":"usr123"}]}
+          - --peerConnectionOptions={"iceServers":[{"urls":["stun:stun.l.google.com:19302","turn:$(turnLoadBalancerIP):3478"],"username":"usr","credential":"usr123"}]}
           - --PublicIp=$(signallingLoadBalancerIP)
         ports:
         - containerPort: 80
@@ -110,7 +131,7 @@ spec:
         - name: pixel-streaming-config
           mountPath: /config
       - name: game
-        image: fancy.azurecr.io/game:4.27
+        image: gbbpixel.azurecr.io/pixelstream/game:dc-build2
         env:
         -  name: SIGNALSERVER_URL
            value: ws://signallingserver:8888

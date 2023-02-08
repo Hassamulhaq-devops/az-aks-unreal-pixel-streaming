@@ -41,7 +41,7 @@ spec:
       hostNetwork: true
       containers:
       - name: turnserver
-        image: fancy.azurecr.io/turn:latest
+        image: TURN
         ports:
         - containerPort: 3478
           protocol: UDP
@@ -49,4 +49,3 @@ spec:
         - containerPort: 3478
           protocol: TCP
           name: tcp
-

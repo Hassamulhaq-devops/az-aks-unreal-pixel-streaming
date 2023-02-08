@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
       - name: redis
-        image: bitnami/redis:latest
+        image: REDIS
         ports:
         - containerPort: 6379
         resources:
@@ -41,3 +41,7 @@ spec:
             value: "yes"
           - name: REDIS_REQUIREPASS
             value: ""
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 10 && redis-cli SET CONNECTIONS 0"]

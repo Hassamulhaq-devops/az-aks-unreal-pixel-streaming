@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scalemonitor
+  labels:
+    app: scalemonitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scalemonitor
+  template:
+    metadata:
+      labels:
+        app: scalemonitor
+    spec:
+      serviceAccountName: kubectl-client
+      containers:
+      - name: scalemonitor
+        image: SCALEMONITOR
