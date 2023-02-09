@@ -31,33 +31,57 @@ AKS settings
 ## Deploying the cluster
 In this initial run of the  `infrastructure/azure-cli/deploy-infra.sh`
 
-**NOTE**: 
-> Ensure you set/change the variables `RG_NAME`, `CLUSTER_NAME`, `LOCATION` to suit your needs.
+### Setup the environment
+> NOTE
+>
+> Ensure you set/change these variables reflect your environment.
 
 ```bash
+#################################################
+# Github credentials
+export GHCR_PAT_TOKEN=""
+export GH_USERNAME=""
+export GIT_REPO_ROOT_PATH=$(git rev-parse --show-toplevel)
+export GAME_COMPONENTS_PATH=$GIT_REPO_ROOT_PATH"/game-server-components"
+
+#################################################
+# AKS settings
 export RG_NAME="pixel_group"
 export CLUSTER_NAME="urpixelstream"
+export ACR_NAME="gbbpixel"
 export LOCATION="eastus"
+export GPU_NP_SKU="Standard_NC12"
+export TURN_NP_SKU="Standard_F8s_v2"
 
-# Create Resource Group
+#################################################
+# Build and Push Game Component Containers
+# Update your container registry name here
+export CONTAINER_REGISTRY_URL="$ACR_NAME.azurecr.io"
+export ORG="pixelstream"
+export CONTAINER_URI=$CONTAINER_REGISTRY_URL/$ORG
+```
+
+### Create Resource Group
+```bash
 az group create \
     --name $RG_NAME \
     --location $LOCATION
-
-# Create Azure Container Registry
+```
+### Create Azure Container Registry
+```bash
 az acr create \
     --name $CLUSTER_NAME \
     --resource-group $RG_NAME \
     --location $LOCATION \
     --sku Standard
+```
 
-# Create AKS Cluster
+### Create AKS Cluster
+```bash
 az aks create \
     --resource-group  $RG_NAME \
     --name $CLUSTER_NAME \
     --node-count 1 \
-    --enable-addons monitoring \
-    --enable-msi-auth-for-monitoring  \
     --generate-ssh-keys \
     --attach-acr $ACR_NAME
 ```

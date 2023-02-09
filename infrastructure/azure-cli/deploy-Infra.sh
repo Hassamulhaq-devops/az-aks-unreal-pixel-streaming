@@ -25,10 +25,7 @@ echo "Create Cluster"
 az aks create \
     --resource-group  $RG_NAME \
     --name $CLUSTER_NAME \
-    --enable-managed-identity \
     --node-count 1 \
-    --enable-addons monitoring \
-    --enable-msi-auth-for-monitoring  \
     --generate-ssh-keys \
     --attach-acr $ACR_NAME
 

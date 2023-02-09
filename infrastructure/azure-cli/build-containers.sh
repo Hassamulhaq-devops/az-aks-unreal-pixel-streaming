@@ -1,5 +1,7 @@
 #! /bin/bash
 #################################################
+source env.rc 
+
 # Build and Push Game Component Containers
 
 # Build Matchmaker image
