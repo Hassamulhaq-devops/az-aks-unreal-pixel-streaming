@@ -5,16 +5,36 @@ Reference Repo to deploy Unreal Pixel Streaming on AKS.
 
 ## Provision the Azure Kubernetes Service
 
-We provide a set of scripts to automate the setup of the infrastructure needed for this demo. You can find them under `infrastructure/azure-cli`.  If you want to use these scripts, the first step is to open the `env.rc` and fill in the values that reflect your environment. 
+Before you proceed:
+ 
+We provide a set of scripts to automate the setup of the infrastructure needed for this demo. You can find them under `infrastructure/azure-cli`.  
 
-In this initial run of the  ```infrastructure/azure-cli/deploy-infra.sh```
+If you want to use these scripts, **the first step** is to open the `env.rc` and fill in the values that reflect your environment. Edit the `env.rc` file under `infrastructure/azure-cli/env.rc` and change the following:
+
+Github settings
+| Parameter | Notes
+|---|---
+| GHCR_PAT_TOKEN | Github PAT token
+| GH_USERNAME | Github username
+
+AKS settings
+| Parameter | Default Value | Notes
+|---|---|---
+| RG_NAME | pixel_group | AKS resource group
+| CLUSTER_NAME | urpixelstream | AKS cluster name
+| ACR_NAME | gbbpixel | Azure Container Registry
+| LOCATION | eastus | Location for the cluster
+| GPU_NP_SKU | Standard_NC12 | GPU SKU node pool
+| TURN_NP_SKU | Standard_F8s_v2 | Turn SKU node pool
+
+
+## Deploying the cluster
+In this initial run of the  `infrastructure/azure-cli/deploy-infra.sh`
 
 **NOTE**: 
-> Ensure you set/change the variables `RG_NAME`, `CLUSTER_NAME`, `LOCATION` to suit your needs
+> Ensure you set/change the variables `RG_NAME`, `CLUSTER_NAME`, `LOCATION` to suit your needs.
 
 ```bash
-#! /bin/bash
-
 export RG_NAME="pixel_group"
 export CLUSTER_NAME="urpixelstream"
 export LOCATION="eastus"
@@ -35,7 +55,6 @@ az acr create \
 az aks create \
     --resource-group  $RG_NAME \
     --name $CLUSTER_NAME \
-    --enable-managed-identity \
     --node-count 1 \
     --enable-addons monitoring \
     --enable-msi-auth-for-monitoring  \
@@ -105,11 +124,13 @@ echo $CR_PAT | docker login ghcr.io -u $USERNAME --password-stdin
 We will need to build and push the Game Server Components to our Azure Container Registry (ACR) for use in our AKS Cluster. 
 
 > NOTE:
+>
 > For the Game image, you will need an unreal project that was compiled on a Linux-based machine.
 > We provide a sample project that can be used as a starting point [here](https://github.com/appdevgbb/unreal-engine-sample-project)
 
-If you are using this sample project, please do the following:
+If you are using this sample project, please do the following.
 
+Steps:
 1. git clone https://github.com/appdevgbb/unreal-engine-sample-project.git
 1. cd unreal-engine-sample-project
 1. docker build -t $CONTAINER_URI/game:4.27 -f Dockerfile .
@@ -122,28 +143,56 @@ cd game-server-components
 ./docker-build.sh
 ```
 
-### Deploy Redis server to store realtime count of current connected players
+### Deployment of the Unreal Pixel Streaming On Azure Kubernetes Service
 
-Redis will be a dependency for the game server components to store info about currently connected  players.
+This is reference implementation for autoscaling of signalling servers based on number of connected players. Redis will be a dependency for the game server components to store info about currently connected players.
 
-```bash
-kubectl apply -f manifests/aks-deploy-redis.yaml
+> NOTE:
+>
+> Before deploying this solution, edit a kustomization file, found under `manifests/demo/kustomization.yaml`. This file is contains the references for the container images for this solution:
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../base
+images:
+- name: GAME
+  newName: gbbpixel.azurecr.io/pixelstream/game
+  newTag: "dc-build2"
+- name: KUBECTL
+  newName: bitnami/kubectl
+  newTag: "latest"
+- name: MATCHMAKER
+  newName: gbbpixel.azurecr.io/pixelstream/matchmaker
+  newTag: "4.27"
+- name: REDIS
+  newName: bitnami/redis
+  newTag: "latest"
+- name: TURN
+  newName: gbbpixel.azurecr.io/pixelstream/turn
+  newTag: "latest"
+- name: SCALEMONITOR
+  newName: gbbpixel.azurecr.io/pixelstream/scalemonitor
+  newTag: "latest"
+- name: SIGNALLINGWEBSERVER
+  newName: gbbpixel.azurecr.io/pixelstream/signallingwebserver
 ```
 
-### Deploy Pixel Streaming Services on AKS
-```bash 
-kubectl apply -f manifests/aks-deploy-game-server-components.yaml
-```
+In this file, for every `image`, you will be changing the following values:
+
+| Parameter | Notes
+|---|---
+| newName | The container repository URI of where the container image is located, including the name of the image
+| newTag | The version of the container image
+
+After the `manifests/demo/kustomization.yaml` is updated with the values that reflect your environment, you are ready to deploy the solution.
+
+Steps:
+1. `cd manifests/demo`
+1. `kubectl apply -k `
+
 ![](img/aks.png)
-
-# Autoscale Deployment of the Unreal Pixel Streaming On Azure Kubernetes Service!
-
-This is reference implementation for autoscaling of signalling servers based on number of connected players.
-
-### Deploy Autoscaled Pixel Streaming Services on AKS
-```bash
-kubectl apply -f manifests/aks-deploy-game-server-components-with-autoscale.yaml
-```
 
 ![](img/SignallingAutoScale.gif)
 
