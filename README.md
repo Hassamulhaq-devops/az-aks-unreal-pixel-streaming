@@ -192,7 +192,33 @@ Steps:
 1. `cd manifests/demo`
 1. `kubectl apply -k `
 
-![](img/aks.png)
+The final deployment should resemble this:
+
+```bash
+kubectl get no,po,svc
+NAME                                     STATUS                     ROLES   AGE   VERSION
+node/aks-gpunp-41306925-vmss000000       Ready,SchedulingDisabled   agent   13d   v1.24.6
+node/aks-gpunp2-32188085-vmss000000      Ready                      agent   8d    v1.24.6
+node/aks-nodepool1-21702042-vmss000000   Ready                      agent   13d   v1.24.6
+node/aks-turnp-79165077-vmss000000       Ready                      agent   13d   v1.24.6
+
+NAME                                    READY   STATUS    RESTARTS      AGE
+pod/matchmaker-64dfdbd8d8-vjnsq         1/1     Running   0             23h
+pod/redis-deployment-cff67fd78-vfs8z    1/1     Running   0             23h
+pod/scalemonitor-7945bc96c4-cvsqs       1/1     Running   6 (23h ago)   23h
+pod/signallingserver-77d7b9576b-p9lss   2/2     Running   0             23h
+pod/turnserver-h5lrq                    1/1     Running   0             23h
+
+NAME                       TYPE           CLUSTER-IP    EXTERNAL-IP      PORT(S)                       AGE
+service/kubernetes         ClusterIP      10.0.0.1      <none>           443/TCP                       13d
+service/matchmaker         LoadBalancer   10.0.18.167   20.121.108.24    90:30855/TCP,9999:32587/TCP   23h
+service/redis              ClusterIP      10.0.58.57    <none>           6379/TCP                      23h
+service/signallingserver   LoadBalancer   10.0.17.41    20.121.108.176   80:30051/TCP,8888:31602/TCP   23h
+service/turnserver         LoadBalancer   10.0.128.14   52.226.247.199   3478:32187/TCP                23h
+```
+
+Finally, you can test scaling up the cluster by adding more players and connecting them to the `signallingserver` service.
+` 
 
 ![](img/SignallingAutoScale.gif)
 
