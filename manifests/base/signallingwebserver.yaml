@@ -131,7 +131,7 @@ spec:
         - name: pixel-streaming-config
           mountPath: /config
       - name: game
-        image: gbbpixel.azurecr.io/pixelstream/game:dc-build2
+        image: GAME
         env:
         -  name: SIGNALSERVER_URL
            value: ws://signallingserver:8888
