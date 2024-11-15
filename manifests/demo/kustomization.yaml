@@ -4,23 +4,23 @@ resources:
 - ../base
 images:
 - name: GAME
-  newName: gbbpixel.azurecr.io/pixelstream/game
-  newTag: "dc-build2"
+  newName: albistest1container.azurecr.io/game
+  newTag: "4.28"
 - name: KUBECTL
   newName: bitnami/kubectl
   newTag: "latest"
 - name: MATCHMAKER
-  newName: gbbpixel.azurecr.io/pixelstream/matchmaker
-  newTag: "4.27"
+  newName: hassamdevops/turn
+  newTag: "matchmaker"
 - name: REDIS
   newName: bitnami/redis
   newTag: "latest"
 - name: TURN
-  newName: gbbpixel.azurecr.io/pixelstream/turn
-  newTag: "latest"
+  newName: hassamdevops/turn
+  newTag: "signalwebserver"
 - name: SCALEMONITOR
-  newName: gbbpixel.azurecr.io/pixelstream/scalemonitor
-  newTag: "latest"
+  newName: hassamdevops/turn
+  newTag: "scalmonitor1"
 - name: SIGNALLINGWEBSERVER
-  newName: gbbpixel.azurecr.io/pixelstream/signallingwebserver
-  newTag: "4.27"
+  newName: hassamdevops/turn
+  newTag: "signalwebserver"
